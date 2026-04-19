@@ -18,7 +18,6 @@ def test_version():
     body = response.json()
     assert body["service"] == "01-svc-hello-rebuild"
     assert body["version"] == "0.1.0"
-    print(response.json())
 
 
 def test_echo():
@@ -29,7 +28,6 @@ def test_echo():
     assert body["message"] == "Hello AI"
     assert body["length"] == 8
     assert "request_id" in body
-    print(body)
 
 
 def test_echo_business_error():
@@ -40,7 +38,6 @@ def test_echo_business_error():
     assert body["error_code"] == "ECHO_BAD_MESSAGE"
     assert body["message"] == "message cannot be error"
     assert "trace_id" in body
-    print(body)
 
 
 def test_echo_validation_error():
@@ -51,5 +48,4 @@ def test_echo_validation_error():
     assert body["error_code"] == "VALIDATION_ERROR"
     assert "message" in body
     assert "trace_id" in body
-    print(body)
 

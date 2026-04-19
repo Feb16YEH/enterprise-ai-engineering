@@ -16,7 +16,7 @@ def version() -> VersionResponse:
         service=settings.service_name,
         version=settings.version,
         build_sha=settings.build_sha,
-        build_time= settings.build_time,
+        build_time=settings.build_time,
     )
 
 

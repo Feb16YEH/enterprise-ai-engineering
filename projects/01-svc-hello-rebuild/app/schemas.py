@@ -24,6 +24,7 @@ class EchoResponse(BaseModel):
     length: int
     request_id: str
 
+
 class ErrorResponse(BaseModel):
     error_code: str
     message: str
