@@ -225,6 +225,3 @@ temp/
 !.env.example
 .python-version
 
-/note.md
-/六周补齐 Python 后端工程底座.md
-/projects/01-svc-hello/
