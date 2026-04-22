@@ -4,6 +4,7 @@ from collections.abc import AsyncGenerator
 from fastapi import FastAPI
 
 from app.database import create_db_and_tables
+from app.models import ReportSpec
 
 
 @asynccontextmanager
