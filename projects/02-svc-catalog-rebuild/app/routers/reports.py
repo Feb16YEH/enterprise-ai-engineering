@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
+from app.security import get_current_user
 from app.database import get_session
 from app.models import ReportSpec, ReportSpecCreate, ReportSpecRead, ReportSpecUpdate
 
@@ -23,6 +24,7 @@ def list_reports(
     limit: int = 20,
     offset: int = 0,
     session: Session = Depends(get_session),
+    current_user: str = Depends(get_current_user),
 ) -> list[ReportSpec]:
     statement = select(ReportSpec).offset(offset).limit(limit)
     reports = session.exec(statement).all()
@@ -32,6 +34,7 @@ def list_reports(
 def get_report(
     report_id: int,
     session: Session = Depends(get_session),
+    current_user: str = Depends(get_current_user),
 ) -> ReportSpec:
     report = session.get(ReportSpec, report_id)
     if report is None:
@@ -47,6 +50,7 @@ def update_report(
     report_id: int,
     report_update: ReportSpecUpdate,
     session: Session = Depends(get_session),
+    current_user: str = Depends(get_current_user),
 ) -> ReportSpec:
     report = session.get(ReportSpec, report_id)
     if report is None:
@@ -71,6 +75,7 @@ def update_report(
 def delete_report(
     report_id: int,
     session: Session = Depends(get_session),
+    current_user: str = Depends(get_current_user),
 ) -> None:
     report = session.get(ReportSpec, report_id)
 

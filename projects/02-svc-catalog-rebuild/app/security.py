@@ -2,11 +2,11 @@ from pydantic import BaseModel
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-oauth2_sheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 FAKE_USERNAME = "admin"
 FAKE_PASSWORD = "password"
-FAKE_TOKEN = "catalong-admin-token"
+FAKE_TOKEN = "catalog-admin-token"
 
 
 class TokenResponse(BaseModel):
@@ -14,7 +14,7 @@ class TokenResponse(BaseModel):
     token_type: str
 
 
-def autherticate_user(username: str, password: str) -> str | None:
+def authenticate_user(username: str, password: str) -> str | None:
     if username == FAKE_USERNAME and password == FAKE_PASSWORD:
         return FAKE_TOKEN
     return None
