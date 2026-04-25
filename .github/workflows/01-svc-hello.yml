@@ -1,0 +1,41 @@
+name: 01 Svc Hello
+
+on:
+  push:
+    paths:
+      - "projects/01-svc-hello-rebuild/**"
+      - ".github/workflows/01-svc-hello.yml"
+  pull_request:
+    paths:
+      - "projects/01-svc-hello-rebuild/**"
+      - ".github/workflows/01-svc-hello.yml"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          cd projects/01-svc-hello-rebuild
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+          pip install ruff
+
+      - name: Run lint
+        run: |
+          cd projects/01-svc-hello-rebuild
+          ruff check .
+
+      - name: Run tests
+        run: |
+          cd projects/01-svc-hello-rebuild
+          python -m pytest tests/test_app.py -q

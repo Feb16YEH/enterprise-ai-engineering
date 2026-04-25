@@ -1,8 +1,15 @@
-name: CI
+name: 02 Svc Catalog
 
 on:
   push:
+    paths:
+      - "projects/02-svc-catalog-rebuild/**"
+      - ".github/workflows/02-svc-catalog.yml"
   pull_request:
+    paths:
+      - "projects/02-svc-catalog-rebuild/**"
+      - ".github/workflows/02-svc-catalog.yml"
+  workflow_dispatch:
 
 jobs:
   test:

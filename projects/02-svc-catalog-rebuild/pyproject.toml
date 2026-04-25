@@ -5,6 +5,8 @@ description = "Autherticated CRUD service for report metadata catalog"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi",
+    "python-multipart",
+    "sqlmodel",
     "uvicorn[standard]",
 ]
 
