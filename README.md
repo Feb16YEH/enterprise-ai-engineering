@@ -2,30 +2,7 @@
 
 FastAPI 最小后端服务练习：健康检查、版本信息、Echo接口、同意错误结构、请求日志、middleware。
 
-## Local Run
+# 02-svc-catalog_rebuild
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements-dev.txt
-uvicorn app.main:app --reload
-
-## Docker Run
-
-docker build -t svc-hello .
-docker run --rm -p 8000:8000 svc-hello
-
-## APIs
-
-curl http://localhost:8000/health
-curl http://localhost:8000/version
-curl -X POST http://localhost:8000/echo \
-  -H "Content-Type: application/json" \
-  -d '{"message":"hello"}'
-
-## Error Example
-curl -X POST http://localhost:8000/echo \
-  -H "Content-Type: application/json" \
-  -d '{"message":"error"}'
-
-```
+这是一个报表元数据目录服务；核心资源是ReportSepc，支持带鉴权的CRUD
+使用 FastAPI + SQLModel + SQLite

@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.database import create_db_and_tables
-from app.models import ReportSpec
+import app.models
 from app.routers import reports
 from app.security import TokenResponse, authenticate_user
 
