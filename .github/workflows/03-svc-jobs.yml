@@ -1,0 +1,42 @@
+name: 03 Svc Jobs
+
+on:
+  push:
+    paths:
+      - "projects/03-svc-jobs-rebuild/**"
+      - ".github/workflows/03-svc-jobs.yml"
+  pull_request:
+    paths:
+      - "projects/03-svc-jobs-rebuild/**"
+      - ".github/workflows/03-svc-jobs.yml"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          cd projects/03-svc-jobs-rebuild
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Check syntax
+        run: |
+          cd projects/03-svc-jobs-rebuild
+          python -m compileall .
+          
+      - name: Run lint
+        run: |
+          cd projects/03-svc-jobs-rebuild
+          ruff check .
+
+
