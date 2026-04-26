@@ -6,5 +6,13 @@ class HealthResponse(BaseModel):
 
 
 class VersionResponse(BaseModel):
-    service: str = "03-svc-jobs-rebuild"
-    version: str = "0.1.0"
+    service: str
+    version: str
+    build_sha: str
+    build_time: str
+
+
+class ErrorResponse(BaseModel):
+    error_code: str
+    message: str
+    trace_id: str
