@@ -16,3 +16,8 @@ class ErrorResponse(BaseModel):
     error_code: str
     message: str
     trace_id: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
