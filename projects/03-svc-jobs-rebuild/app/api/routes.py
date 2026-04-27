@@ -1,7 +1,7 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status, HTTPException
-from sqlmodel import Session
+from fastapi import APIRouter, BackgroundTasks, Depends, status, Query, HTTPException
+from sqlmodel import Session, select
 
 from app.core.config import settings
 from app.schemas import (
@@ -15,10 +15,12 @@ from app.schemas import (
 from app.shared.auth import User, authenticate_user, get_current_user
 from app.db.models import Job, JobStatus
 from app.db.session import get_session
+from app.services.jobs import JobRunner, get_job_runner
 
 router = APIRouter()
 TokenUserDep = Annotated[User, Depends(authenticate_user)]
 CurrentUserDep = Annotated[User, Depends(get_current_user)]
+JobRunnerDep = Annotated[JobRunner, Depends(get_job_runner)]
 SessionDep = Annotated[Session, Depends(get_session)]
 
 
@@ -54,8 +56,10 @@ async def me(current_user: CurrentUserDep) -> dict[str, str]:
 )
 async def create_job(
     payload: JobCreate,
+    background_tasks: BackgroundTasks,
     session: SessionDep,
     current_user: CurrentUserDep,
+    job_runner: JobRunnerDep,
 ) -> JobAccepted:
     job = Job(
         task_type=payload.task_type,
@@ -77,11 +81,31 @@ async def create_job(
     if job.id is None:
         raise RuntimeError("job id was not generated")
     
+    background_tasks.add_task(job_runner, job.id)
+    
     return JobAccepted(
         job_id=job.id,
         status=job.status,
         detail="job accepted for background execution",
     )
+
+
+@router.get("/jobs", response_model=list[JobRead])
+async def list_jobs(
+    session: SessionDep,
+    current_user: CurrentUserDep,
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+) -> list[Job]:
+    statement = (
+        select(Job)
+        .where(Job.submitted_by == current_user.username)
+        .order_by(Job.created_at.desc())
+        .offset(offset)
+        .limit(limit)
+    )
+    return list(session.exec(statement).all())
+
 
 
 @router.get("/jobs/{job_id}", response_model=JobRead)

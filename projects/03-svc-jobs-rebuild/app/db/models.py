@@ -7,7 +7,7 @@ from sqlmodel import Field, SQLModel
 
 
 class JobStatus(StrEnum):
-    PENDING = "PENDIING"
+    PENDING = "PENDING"
     RUNNING = "RUNNING"
     DONE = "DONE"
     FAILED = "FAILED"
