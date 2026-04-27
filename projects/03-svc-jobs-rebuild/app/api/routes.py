@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException
 from sqlmodel import Session
 
 from app.core.config import settings
@@ -10,6 +10,7 @@ from app.schemas import (
     TokenResponse,
     JobAccepted,
     JobCreate,
+    JobRead,
 )
 from app.shared.auth import User, authenticate_user, get_current_user
 from app.db.models import Job, JobStatus
@@ -81,3 +82,37 @@ async def create_job(
         status=job.status,
         detail="job accepted for background execution",
     )
+
+
+@router.get("/jobs/{job_id}", response_model=JobRead)
+async def get_job(
+    job_id: int,
+    session: SessionDep,
+    current_user: CurrentUserDep,
+) -> Job:
+    job = _get_job_or_404(session=session, job_id=job_id)
+
+    if job.submitted_by != current_user.username:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "error_code": "JOB_FORBIDDEN",
+                "message": "you can only read jobs submitted by yourself",
+            },
+        )
+    
+    return job
+
+
+def _get_job_or_404(*, session: Session, job_id: int) -> Job:
+    job = session.get(Job, job_id)
+    if job is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "error_code": "JOB_NOT_FOUND",
+                "message": f"job {job_id} was not found",
+            },
+        )
+    
+    return job

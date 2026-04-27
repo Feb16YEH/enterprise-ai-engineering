@@ -50,6 +50,6 @@ class JobRead(BaseModel):
     result_summary: str | None
     error_message: str | None
     created_at: datetime
-    started_at: datetime
+    started_at: datetime | None
     finished_at: datetime | None
     duration_ms: float | None
