@@ -31,7 +31,7 @@ class TokenResponse(BaseModel):
 class JobCreate(BaseModel):
     task_type: Literal["report_export", "data_extract", "load_table"]
     payload: dict[str, Any] = Field(default_factory=dict)
-    simulate_seconds: float | None = Field(dafault=None, ge=0, le=10)
+    simulate_seconds: float | None = Field(default=None, ge=0, le=10)
     should_fail: bool = False
 
 

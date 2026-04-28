@@ -30,7 +30,7 @@ def authenticate_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={
-                "error_code": "INVAILD_CREDENTIALS",
+                "error_code": "INVALID_CREDENTIALS",
                 "message": "invalid username or password",
             },
             headers={"WWW-Authenticate": "Bearer"},
