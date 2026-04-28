@@ -95,7 +95,7 @@ def _build_result_summary(job: Job) -> str:
         return f"data_extract completed from {source}"
     
     if job.task_type == "load_table":
-        table = job.payload.get("table", "unknown_table")
+        table = job.payload.get("target_table", "unknown_table")
         return f"load_table completed into {table}"
     
     return f"{job.task_type} completed successfully"

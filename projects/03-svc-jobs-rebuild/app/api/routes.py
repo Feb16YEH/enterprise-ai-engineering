@@ -44,11 +44,6 @@ async def token(user: TokenUserDep) -> TokenResponse:
     return TokenResponse(access_token=user.token)
 
 
-@router.get("/me")
-async def me(current_user: CurrentUserDep) -> dict[str, str]:
-    return {"username": current_user.username}
-
-
 @router.post(
     "/jobs",
     response_model=JobAccepted,
