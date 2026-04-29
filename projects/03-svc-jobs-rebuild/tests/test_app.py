@@ -104,3 +104,67 @@ def test_create_job_runs_to_done(client: TestClient) -> None:
     assert job["started_at"] is not None
     assert job["finished_at"] is not None
     assert job["duration_ms"] is not None
+
+
+def test_create_job_records_failure(client: TestClient) -> None:
+    response = client.post(
+        "/jobs",
+        headers={"Authorization": "Bearer token-alice"},
+        json={
+            "task_type": "data_extract",
+            "payload": {"source": "warehouse.fact_sales"},
+            "simulate_seconds": 0,
+            "should_fail": True,
+        },
+    )
+
+    assert response.status_code == 202
+    job_id = response.json()["job_id"]
+
+    detail_response = client.get(
+        f"/jobs/{job_id}",
+        headers={"Authorization": "Bearer token-alice"},
+    )
+
+    assert detail_response.status_code == 200
+    job = detail_response.json()
+    assert job["status"] == "FAILED"
+    assert job["result_summary"] is None
+    assert job["error_message"] == "simulated job failure"
+    assert job["finished_at"] is not None
+    assert job["duration_ms"] is not None
+
+
+def test_get_job_not_found(client: TestClient) -> None:
+    response = client.get(
+        "/jobs/999",
+        headers={"Authorization": "Bearer token-alice"},
+    )
+
+    assert response.status_code == 404
+    body = response.json()
+    assert body["error_code"] == "JOB_NOT_FOUND"
+    assert body["trace_id"] == response.headers["x-request-id"]
+
+
+def test_get_job_forbidden_for_other_user(client: TestClient) -> None:
+    # Create a job with alice
+    create_response = client.post(
+        "/jobs",
+        headers={"Authorization": "Bearer token-alice"},
+        json={
+            "task_type": "report_export",
+            "payload": {"report_name": "daily_sales"},
+            "simulate_seconds": 0,
+            "should_fail": False,
+        },
+    )
+    job_id = create_response.json()["job_id"]
+
+    response = client.get(
+        f"/jobs/{job_id}",
+        headers={"Authorization": "Bearer token-bob"},
+    )
+
+    assert response.status_code == 403
+    assert response.json()["error_code"] == "JOB_FORBIDDEN"
