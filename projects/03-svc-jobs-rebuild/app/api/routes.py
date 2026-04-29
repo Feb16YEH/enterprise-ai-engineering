@@ -1,21 +1,21 @@
 from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, Depends, status, Query, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
 from sqlmodel import Session, select
 
 from app.core.config import settings
+from app.db.models import Job, JobStatus
+from app.db.session import get_session
 from app.schemas import (
     HealthResponse,
-    VersionResponse,
-    TokenResponse,
     JobAccepted,
     JobCreate,
     JobRead,
+    TokenResponse,
+    VersionResponse,
 )
-from app.shared.auth import User, authenticate_user, get_current_user
-from app.db.models import Job, JobStatus
-from app.db.session import get_session
 from app.services.jobs import JobRunner, get_job_runner
+from app.shared.auth import User, authenticate_user, get_current_user
 
 router = APIRouter()
 TokenUserDep = Annotated[User, Depends(authenticate_user)]
