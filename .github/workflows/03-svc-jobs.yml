@@ -39,4 +39,9 @@ jobs:
           cd projects/03-svc-jobs-rebuild
           ruff check .
 
+      - name: Run tests
+        run: |
+          cd projects/03-svc-jobs-rebuild
+          python -m pytest tests/test_app.py -q
+
 
