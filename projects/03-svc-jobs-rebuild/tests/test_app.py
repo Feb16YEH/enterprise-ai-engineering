@@ -72,3 +72,35 @@ def test_token_invalid_credentials(client: TestClient) -> None:
 
     assert response.status_code == 401
     assert response.json()["error_code"] == "INVALID_CREDENTIALS"
+
+
+def test_create_job_runs_to_done(client: TestClient) -> None:
+    response = client.post(
+        "/jobs",
+        headers={"Authorization": "Bearer token-alice"},
+        json={
+            "task_type": "report_export",
+            "payload": {"report_name": "daily_sales"},
+            "simulate_seconds": 0,
+            "should_fail": False,
+        },
+    )
+
+    assert response.status_code == 202
+    accepted = response.json()
+    assert accepted["status"] == "PENDING"
+
+    job_id = accepted["job_id"]
+    detail_response = client.get(
+        f"/jobs/{job_id}",
+        headers={"Authorization": "Bearer token-alice"},
+    )
+
+    assert detail_response.status_code == 200
+    job = detail_response.json()
+    assert job["status"] == "DONE"
+    assert job["result_summary"] == "report_export completed for daily_sales"
+    assert job["error_message"] is None
+    assert job["started_at"] is not None
+    assert job["finished_at"] is not None
+    assert job["duration_ms"] is not None
