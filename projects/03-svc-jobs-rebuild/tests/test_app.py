@@ -168,3 +168,36 @@ def test_get_job_forbidden_for_other_user(client: TestClient) -> None:
 
     assert response.status_code == 403
     assert response.json()["error_code"] == "JOB_FORBIDDEN"
+
+
+def test_list_jobs_returns_current_user_jobs(client: TestClient) -> None:
+    client.post(
+        "/jobs",
+        headers={"Authorization": "Bearer token-alice"},
+        json={
+            "task_type": "report_export",
+            "payload": {"report_name": "alice_report"},
+            "simulate_seconds": 0,
+        },
+    )
+
+    client.post(
+        "/jobs",
+        headers={"Authorization": "Bearer token-bob"},
+        json={
+            "task_type": "load_table",
+            "payload": {"report_name": "bob_table"},
+            "simulate_seconds": 0,
+        },
+    )
+
+    response = client.get(
+        "/jobs",
+        headers={"Authorization": "Bearer token-alice"},
+    )
+
+    assert response.status_code == 200
+    jobs = response.json()
+    assert len(jobs) == 1
+    assert jobs[0]["submitted_by"] == "alice"
+    assert jobs[0]["payload"]["report_name"] == "alice_report"
