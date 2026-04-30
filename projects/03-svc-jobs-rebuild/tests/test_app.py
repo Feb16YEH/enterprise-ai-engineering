@@ -51,7 +51,7 @@ def test_version(client: TestClient) -> None:
     assert body["version"] == "0.1.0"
 
 
-def test_token_sucess(client: TestClient) -> None:
+def test_token_success(client: TestClient) -> None:
     response = client.post(
         "/token",
         data={"username": "alice", "password": "secret"},
