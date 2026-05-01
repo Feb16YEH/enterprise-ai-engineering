@@ -87,3 +87,54 @@ Response:
 Query:
 
 curl -H "Authorization: Bearer token-alice" http:localhost:8000/jobs/1
+
+## Simulate Failure
+
+curl -X POST http://localhost:8000/jobs \
+  -H "Authorization: Bearer token-alice" \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "task_type": "data_extract",
+    "payload": {
+        "source": "warehouse.fact_sales"
+    },
+    "simulate_seconds": 1,
+    "should_fail": true
+  }'
+
+  Excepected final state:
+  {
+    "status": "FAILED",
+    "error_message": "simulate job failure"
+  }
+
+## Error Response
+
+HTTPException response use this shape:
+
+{
+    "error_code": "JOB_NOT_FOUND",
+    "message": "job 999 was not found",
+    "trace_id": "same value as X-Request-ID"
+}
+
+## BackgroundTasks Notes
+
+FastAPI BackgroundTasks is useful for this practice stage because
+it let the request return quickly while lightweight work countinues
+after the response.
+
+It is not a distrubuted queue:
+
+- Tasks run in the same application process.
+- A process crash or restart can interrupt running work.
+- Multi-woker deployments do not share an in-process task queue.
+- It does not provide durable retries, scheduling, ackowledgements, concurrency control, or centralized monitoring.
+
+For production-grade long-running jobs, use a real queue and worker
+system such as Redis/RQ, Celery, Arq, RabbitMQ, or Kafka-based workers.
+
+## Test and Lint
+
+ruff check .
+pytest
