@@ -138,3 +138,17 @@ system such as Redis/RQ, Celery, Arq, RabbitMQ, or Kafka-based workers.
 
 ruff check .
 pytest
+
+## Docker
+
+Build:
+```bash
+docker build -t 03-svc-jobs-rebuild .
+
+Run:
+
+docker run --rm -p 8000:8000 03-svc-jobs-rebuild
+
+Veryfy:
+
+The container uses SQLite at /app/jobs.db. Data is ephemeral when the contaniner is removed, which is acceptable for this practice service.

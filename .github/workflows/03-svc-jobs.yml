@@ -44,4 +44,9 @@ jobs:
           cd projects/03-svc-jobs-rebuild
           python -m pytest tests/test_app.py -q
 
+      - name: Build Docker image
+        run: |
+          cd projects/03-svc-jobs-rebuild
+          docker build -t 03-svc-jobs-rebuild .
+
 
