@@ -1,0 +1,30 @@
+import sqlite3
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = PROJECT_ROOT / "data"
+DATABASE_PATH = DATA_DIR / "banking.db"
+
+
+def initialize_database():
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    connection = sqlite3.connect(DATABASE_PATH)
+
+    try:
+        connection.execute("PRAGMA foreign_keys = ON")
+
+        foreign_keys_enabled = connection.execute(
+            "PRAGMA foreign_keys"
+        ).fetchone()[0]
+
+        print(f"DATABASE_PATH: {DATABASE_PATH}")
+        print(f"Foreign keys enabled: {foreign_keys_enabled}")
+    finally:
+        connection.close()
+
+
+
+
+if __name__ == "__main__":
+    initialize_database()
