@@ -3,7 +3,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
-DATABASE_PATH = DATA_DIR / "banking.db"
+DATABASE_PATH = DATA_DIR / "banking_v0.db"
 
 
 def initialize_database():
@@ -20,10 +20,19 @@ def initialize_database():
 
         print(f"DATABASE_PATH: {DATABASE_PATH}")
         print(f"Foreign keys enabled: {foreign_keys_enabled}")
+
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS branches (
+                branch_id INTEGER PRIMARY KEY,
+                branch_name TEXT NOT NULL UNIQUE
+            )
+            """
+        )
+
+        connection.commit()
     finally:
         connection.close()
-
-
 
 
 if __name__ == "__main__":
