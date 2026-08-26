@@ -30,6 +30,23 @@ def initialize_database():
             """
         )
 
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS loans(
+                loan_id INTEGER PRIMARY KEY,
+                branch_id INTEGER NOT NULL,
+                loan_date TEXT NOT NULL
+                    CHECK (loan_date GLOB '????-??-??'),
+                balance_cents INTEGER NOT NULL
+                    CHECK (balance_cents >= 0),
+                overdue_flag INTEGER NOT NULL
+                    CHECK (overdue_flag IN (0, 1)),
+                FOREIGN KEY (branch_id)
+                    REFERENCES branches (branch_id)
+            )
+            """
+        )
+
         connection.commit()
     finally:
         connection.close()
